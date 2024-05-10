@@ -25,7 +25,7 @@ namespace Bookify.Infrastructure
             services.AddTransient<IEmailService, EmailService>();
 
             // entity framework
-            string connectionString = configuration.GetConnectionString("DefaultConnection") ?? throw new ArgumentNullException("DefaultConnection is not found in the configuration");
+            string connectionString = configuration.GetConnectionString("Database") ?? throw new ArgumentNullException("DefaultConnection is not found in the configuration");
             services.AddDbContext<ApplicationDbContext>(options =>
             {
                 options.UseNpgsql(connectionString).UseSnakeCaseNamingConvention();

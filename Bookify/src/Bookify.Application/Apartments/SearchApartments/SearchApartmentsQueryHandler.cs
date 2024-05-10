@@ -48,9 +48,9 @@ internal sealed class SearchApartmentsQueryHandler : IQueryHandler<SearchApartme
                 FROM bookings AS b
                 WHERE 
                     b.apartment_id = a.id AND
-                    b_duration_start < @EndDate AND
-                    b_duration_end > @StartDate AND
-                    b_status = ANY(@ActiveBookingStatuses)
+                    b.duration_start < @EndDate AND
+                    b.duration_end > @StartDate AND
+                    b.status = ANY(@ActiveBookingStatuses)
             )
          ";
 

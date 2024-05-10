@@ -2,29 +2,28 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Bookify.Infrastructure.Configurations
+namespace Bookify.Infrastructure.Configurations;
+
+internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
 {
-    internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
+    public void Configure(EntityTypeBuilder<User> builder)
     {
-        public void Configure(EntityTypeBuilder<User> builder)
-        {
-            builder.ToFunction("users");
-            builder.HasKey(user => user.Id);
+        builder.ToTable("users");
 
-            builder.Property(user => user.FirstName)
-                .HasMaxLength(25)
-                .HasConversion(firstName => firstName.Value, value => new FirstName(value));
+        builder.HasKey(user => user.Id);
 
-            builder.Property(user => user.LastName)
-                .HasMaxLength(25)
-                .HasConversion(lastName => lastName.Value, value => new LastName(value));
+        builder.Property(user => user.FirstName)
+            .HasMaxLength(200)
+            .HasConversion(firstName => firstName.Value, value => new FirstName(value));
 
-            builder.Property(user => user.Email)
-                .HasMaxLength(100)
-                .HasConversion(email => email.Value, value => new Domain.Users.Email(value));
+        builder.Property(user => user.LastName)
+            .HasMaxLength(200)
+            .HasConversion(firstName => firstName.Value, value => new LastName(value));
 
-            builder.HasIndex(user => user.Email)
-                .IsUnique();
-        }
+        builder.Property(user => user.Email)
+            .HasMaxLength(400)
+            .HasConversion(email => email.Value, value => new Domain.Users.Email(value)); ;
+
+        builder.HasIndex(user => user.Email).IsUnique();
     }
 }
