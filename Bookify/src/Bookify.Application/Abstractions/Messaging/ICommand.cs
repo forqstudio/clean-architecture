@@ -7,8 +7,7 @@ public interface ICommand : IRequest<Result>, IBaseCommand
 {
 }
 
-
-public interface ICommand<TResponse> : IRequest<Result<TResponse>>, ICommand
+public interface ICommand<TReponse> : IRequest<Result<TReponse>>, IBaseCommand
 {
 }
 

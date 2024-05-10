@@ -2,4 +2,4 @@
 
 namespace Bookify.Application.Bookings.GetBooking;
 
-sealed record GetBookingQuery(Guid BookingId) : IQuery<BookingResponse>;
+public sealed record GetBookingQuery(Guid BookingId) : IQuery<BookingResponse>;
