@@ -1,4 +1,3 @@
-using Bookify.Api;
 using Bookify.Api.Extensions;
 using Bookify.Application;
 using Bookify.Infrastructure;
@@ -27,6 +26,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCustomExceptionHandler();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

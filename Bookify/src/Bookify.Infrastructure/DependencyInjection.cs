@@ -13,6 +13,10 @@ using Bookify.Domain.Abstractions;
 using Bookify.Application.Abstractions.Data;
 using Bookify.Infrastructure.Data;
 using Dapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Bookify.Infrastructure.Authentication;
+using Bookify.Application.Abstractions.Authentication;
+using Microsoft.Extensions.Options;
 
 namespace Bookify.Infrastructure
 {
@@ -25,7 +29,7 @@ namespace Bookify.Infrastructure
             services.AddTransient<IEmailService, EmailService>();
 
             // entity framework
-            string connectionString = configuration.GetConnectionString("Database") ?? throw new ArgumentNullException("DefaultConnection is not found in the configuration");
+            string connectionString = configuration.GetConnectionString("Database") ?? throw new ArgumentNullException("connection string is not found in the configuration");
             services.AddDbContext<ApplicationDbContext>(options =>
             {
                 options.UseNpgsql(connectionString).UseSnakeCaseNamingConvention();
@@ -41,7 +45,34 @@ namespace Bookify.Infrastructure
             services.AddScoped<IBookingRepository, BookingRepository>();
             services.AddScoped<IUnitOfWork>(serviceProvider => serviceProvider.GetRequiredService<ApplicationDbContext>());
 
+            // bookify auth
+            services
+               .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+               .AddJwtBearer();
+
+            services.Configure<AuthenticationOptions>(configuration.GetSection("Authentication"));
+            services.ConfigureOptions<JwtBearerOptionsSetup>();
+
+            services.Configure<KeycloakOptions>(configuration.GetSection("Keycloak"));
+            services.AddTransient<AdminAuthorizationDelegatingHandler>();
+
+            services.AddHttpClient<IAuthenticationService, AuthenticationService>((ServiceProvider, httpClient) =>
+            {
+                var keycloakOptions = ServiceProvider.GetRequiredService<IOptions<KeycloakOptions>>().Value;
+
+                httpClient.BaseAddress = new Uri(keycloakOptions.AdminUrl);
+                 
+            }).AddHttpMessageHandler<AdminAuthorizationDelegatingHandler>();
+
+            services.AddHttpClient<IJwtService, JwtService>((serviceProvider, httpClient) =>
+            {
+                var keycloakOptions = serviceProvider.GetRequiredService<IOptions<KeycloakOptions>>().Value;
+                httpClient.BaseAddress = new Uri(keycloakOptions.TokenUrl);
+            });
+
             return services;
         }
+
+
     }
 }
