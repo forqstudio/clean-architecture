@@ -17,6 +17,11 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Bookify.Infrastructure.Authentication;
 using Bookify.Application.Abstractions.Authentication;
 using Microsoft.Extensions.Options;
+using Bookify.Infrastructure.Authorization;
+using Microsoft.AspNetCore.Authentication;
+using AuthenticationOptions = Bookify.Infrastructure.Authentication.AuthenticationOptions;
+using AuthenticationService = Bookify.Infrastructure.Authentication.AuthenticationService;
+using IAuthenticationService = Bookify.Application.Abstractions.Authentication.IAuthenticationService;
 
 namespace Bookify.Infrastructure
 {
@@ -70,9 +75,14 @@ namespace Bookify.Infrastructure
                 httpClient.BaseAddress = new Uri(keycloakOptions.TokenUrl);
             });
 
+            services.AddHttpContextAccessor();
+            services.AddScoped<IUserContext, UserContext>();
+
+            services.AddScoped<AuthorizationService>();
+
+            services.AddTransient<IClaimsTransformation, CustomClaimsTransformation>();
+
             return services;
         }
-
-
     }
 }
