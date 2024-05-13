@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Bookify.Api.Controllers.Users;
 
 [ApiController]
+[Authorize]
 [Route("api/v1/users")]
 public class UsersController : ControllerBase
 {
