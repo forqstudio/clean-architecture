@@ -5,43 +5,45 @@ namespace Bookify.Domain.Bookings;
 
 public class PricingService
 {
-    public PricingDetails CalculatePrice(Apartment apartment, DateRange duration)
+    public PricingDetails CalculatePrice(Apartment apartment, DateRange period)
     {
         var currency = apartment.Price.Currency;
-        var priceForDuration = new Money(apartment.Price.Amount * duration.LengthInDays, currency);
-        
+
+        var priceForPeriod = new Money(
+            apartment.Price.Amount * period.LengthInDays,
+            currency);
+
         decimal percentageUpCharge = 0;
-        foreach(var amenity in apartment.Amenities)
+        foreach (var amenity in apartment.Amenities)
         {
             percentageUpCharge += amenity switch
             {
                 Amenity.GardenView or Amenity.MountainView => 0.05m,
-                Amenity.AirConditioning or Amenity.Parking => 0.01m,
+                Amenity.AirConditioning => 0.01m,
+                Amenity.Parking => 0.01m,
                 _ => 0
             };
         }
 
-        var amenitiesUpcharge = Money.Zero(currency);
-        if(percentageUpCharge > 0)
+        var amenitiesUpCharge = Money.Zero(currency);
+        if (percentageUpCharge > 0)
         {
-            amenitiesUpcharge = new Money(priceForDuration.Amount * percentageUpCharge, currency);
+            amenitiesUpCharge = new Money(
+                priceForPeriod.Amount * percentageUpCharge,
+                currency);
         }
 
-        var totalPrice = Money.Zero();
-        totalPrice += priceForDuration;
+        var totalPrice = Money.Zero(currency);
+
+        totalPrice += priceForPeriod;
 
         if (!apartment.CleaningFee.IsZero())
         {
             totalPrice += apartment.CleaningFee;
         }
 
-        totalPrice += amenitiesUpcharge;
+        totalPrice += amenitiesUpCharge;
 
-        return new PricingDetails(
-            priceForDuration, 
-            apartment.CleaningFee, 
-            amenitiesUpcharge, 
-            totalPrice);
+        return new PricingDetails(priceForPeriod, apartment.CleaningFee, amenitiesUpCharge, totalPrice);
     }
-  
 }
