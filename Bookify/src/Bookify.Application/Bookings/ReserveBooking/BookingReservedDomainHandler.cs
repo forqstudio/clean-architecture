@@ -36,8 +36,6 @@ internal sealed record BookingReservedDomainHandler : INotificationHandler<Booki
             user.Email, 
             "Booking Reserved", 
             "Your booking has been reserved. You have 10 minutes to confirm your booking");
-
-
     }
 
 }
