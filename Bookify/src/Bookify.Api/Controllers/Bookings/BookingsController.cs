@@ -1,12 +1,14 @@
 ﻿using Bookify.Application.Bookings.GetBooking;
 using Bookify.Application.Bookings.ReserveBooking;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
 namespace Bookify.Api.Controllers.Bookings
 {
     [ApiController]
+    [Authorize]
     [Route("api/v1/bookings")]
     public class BookingsController : ControllerBase
     {
@@ -14,11 +16,11 @@ namespace Bookify.Api.Controllers.Bookings
 
         public BookingsController(ISender sender)
         {
-            _sender = sender;                
+            _sender = sender;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetBookingsAsync(
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetBooking(
             Guid id,
             CancellationToken cancellationToken)
         {
@@ -32,8 +34,8 @@ namespace Bookify.Api.Controllers.Bookings
             CancellationToken cancellationToken)
         {
             var command = new ReserveBookingCommand(
-                request.UserId,
                 request.ApartmentId,
+                request.UserId,
                 request.StartDate,
                 request.EndDate);
 
@@ -44,7 +46,8 @@ namespace Bookify.Api.Controllers.Bookings
                 return StatusCode((int)HttpStatusCode.InternalServerError, result.Error);
             }
 
-            return CreatedAtAction(nameof(GetBookingsAsync), new { id = result.Value }, result.Value);
+
+            return CreatedAtAction(nameof(GetBooking), new { id = result.Value }, result.Value);
         }
     }
 }
