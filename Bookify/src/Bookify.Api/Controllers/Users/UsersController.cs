@@ -24,6 +24,7 @@ public class UsersController : ControllerBase
     }
 
     [AllowAnonymous]
+    [ApiVersion(ApiVersions.V1)]
     [HttpPost("register")]
     public async Task<IActionResult> Register(
         RegisterUserRequest request,
@@ -46,6 +47,7 @@ public class UsersController : ControllerBase
     }
 
     [AllowAnonymous]
+    [ApiVersion(ApiVersions.V1)]
     [HttpPost("login")]
     public async Task<IActionResult> LogIn(
         LogInUserRequest request,
