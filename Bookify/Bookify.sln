@@ -17,7 +17,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bookify.Api", "src\Bookify.
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{9A053CD7-34A2-4786-89DD-85A0D6A00AA4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bookify.Domain.UnitTests", "test\Bookify.Domain.UnitTests\Bookify.Domain.UnitTests.csproj", "{E2428B10-3716-4401-81D8-35C2690E9BE1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bookify.Domain.UnitTests", "test\Bookify.Domain.UnitTests\Bookify.Domain.UnitTests.csproj", "{E2428B10-3716-4401-81D8-35C2690E9BE1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bookify.Application.UnitTests", "test\Bookify.Application.UnitTests\Bookify.Application.UnitTests.csproj", "{F8F5E45C-FAFF-4FC1-91AE-BF9C9858AE76}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -49,6 +51,10 @@ Global
 		{E2428B10-3716-4401-81D8-35C2690E9BE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E2428B10-3716-4401-81D8-35C2690E9BE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E2428B10-3716-4401-81D8-35C2690E9BE1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8F5E45C-FAFF-4FC1-91AE-BF9C9858AE76}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8F5E45C-FAFF-4FC1-91AE-BF9C9858AE76}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8F5E45C-FAFF-4FC1-91AE-BF9C9858AE76}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8F5E45C-FAFF-4FC1-91AE-BF9C9858AE76}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -59,6 +65,7 @@ Global
 		{A29171A4-D895-4E29-B70C-7FC76452DDE5} = {90B38BE5-A241-44CF-A5C6-D2D1AEEC7501}
 		{E87428DB-6D6C-40E7-99C0-8E089320C533} = {90B38BE5-A241-44CF-A5C6-D2D1AEEC7501}
 		{E2428B10-3716-4401-81D8-35C2690E9BE1} = {FFE858EA-162A-4CBE-AE90-872CD613F7D5}
+		{F8F5E45C-FAFF-4FC1-91AE-BF9C9858AE76} = {FFE858EA-162A-4CBE-AE90-872CD613F7D5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7886086E-5FDE-4346-9331-C3CEE77E1E7A}
