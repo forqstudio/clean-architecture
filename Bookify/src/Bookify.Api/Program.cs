@@ -44,8 +44,8 @@ if (app.Environment.IsDevelopment())
     });
 
     app.ApplyMigrations();
-    
-    app.SeedData();
+    // uncomment if you want to seed data
+    //  app.SeedData();
 }
 
 app.UseHttpsRedirection();
