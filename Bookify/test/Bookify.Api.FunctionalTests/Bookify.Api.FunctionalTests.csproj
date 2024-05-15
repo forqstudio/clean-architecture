@@ -10,7 +10,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include=".files\bookify-realm-export.json" />
+    <Content Include=".files\bookify-realm-export.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
