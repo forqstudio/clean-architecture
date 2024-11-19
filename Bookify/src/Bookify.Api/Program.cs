@@ -8,15 +8,13 @@ using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
 builder.Host.UseSerilog((context, configuration) =>
 {
     configuration.ReadFrom.Configuration(context.Configuration);
 });
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -45,7 +43,7 @@ if (app.Environment.IsDevelopment())
 
     app.ApplyMigrations();
     // uncomment if you want to seed data
-    //  app.SeedData();
+    app.SeedData();
 }
 
 app.UseHttpsRedirection();
