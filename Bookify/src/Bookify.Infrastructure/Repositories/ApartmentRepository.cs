@@ -2,10 +2,7 @@
 
 namespace Bookify.Infrastructure.Repositories;
 
-internal sealed class ApartmentRepository : Repository<Apartment>, IApartmentRepository
+internal sealed class ApartmentRepository(ApplicationDbContext dbContext)
+    : Repository<Apartment>(dbContext), IApartmentRepository
 {
-    public ApartmentRepository(ApplicationDbContext dbContext)
-        : base(dbContext)
-    {
-    }
 }

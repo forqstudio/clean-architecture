@@ -53,7 +53,7 @@ public static class DependencyInjection
 
         AddApiVersioning(services);
 
-        AddBackgroundJobs(services, configuration);
+        // AddBackgroundJobs(services, configuration);
 
         return services;
     }

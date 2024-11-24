@@ -2,32 +2,32 @@
 using Bookify.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
-namespace Bookify.Api.Extensions
+namespace Bookify.Api.Extensions;
+
+internal static class ApplicationBuilderExtensions
 {
-    internal static class ApplicationBuilderExtensions
+    public static IApplicationBuilder ApplyMigrations(this IApplicationBuilder builder)
     {
-        public static IApplicationBuilder ApplyMigrations(this IApplicationBuilder builder)
-        {
-            using var scope = builder.ApplicationServices.CreateScope();
-            var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        using var scope = builder.ApplicationServices.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-            dbContext.Database.Migrate();
+        dbContext.Database.Migrate();
 
-            return builder;
-        }
+        return builder;
+    }
 
-        public static IApplicationBuilder UseCustomExceptionHandler(this IApplicationBuilder builder)
-        {
-            builder.UseMiddleware<ExceptionHandlingMiddleware>();
+    public static IApplicationBuilder UseCustomExceptionHandler(this IApplicationBuilder builder)
+    {
+        builder.UseMiddleware<ExceptionHandlingMiddleware>();
 
-            return builder;
-        }
+        return builder;
+    }
 
-        public static IApplicationBuilder UseRequestContextLogging(this IApplicationBuilder builder)
-        {
-            builder.UseMiddleware<RequestContextLoggingMiddleware>();
-            
-            return builder;
-        }
+    public static IApplicationBuilder UseRequestContextLogging(this IApplicationBuilder builder)
+    {
+        builder.UseMiddleware<RequestContextLoggingMiddleware>();
+
+        return builder;
     }
 }
+

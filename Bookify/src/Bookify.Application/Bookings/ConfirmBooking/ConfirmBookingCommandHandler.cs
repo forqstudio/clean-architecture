@@ -5,41 +5,30 @@ using Bookify.Domain.Bookings;
 
 namespace Bookify.Application.Bookings.ConfirmBooking;
 
-internal sealed class ConfirmBookingCommandHandler : ICommandHandler<ConfirmBookingCommand>
+internal sealed class ConfirmBookingCommandHandler(
+    IDateTimeProvider dateTimeProvider,
+    IBookingRepository bookingRepository,
+    IUnitOfWork unitOfWork) : ICommandHandler<ConfirmBookingCommand>
 {
-    private readonly IDateTimeProvider _dateTimeProvider;
-    private readonly IBookingRepository _bookingRepository;
-    private readonly IUnitOfWork _unitOfWork;
-
-    public ConfirmBookingCommandHandler(
-        IDateTimeProvider dateTimeProvider,
-        IBookingRepository bookingRepository,
-        IUnitOfWork unitOfWork)
-    {
-        _dateTimeProvider = dateTimeProvider;
-        _bookingRepository = bookingRepository;
-        _unitOfWork = unitOfWork;
-    }
-
     public async Task<Result> Handle(
         ConfirmBookingCommand request,
         CancellationToken cancellationToken)
     {
-        var booking = await _bookingRepository.GetByIdAsync(request.BookingId, cancellationToken);
+        var booking = await bookingRepository.GetByIdAsync(request.BookingId, cancellationToken);
 
         if (booking is null)
         {
             return Result.Failure(BookingErrors.NotFound);
         }
 
-        var result = booking.Confirm(_dateTimeProvider.UtcNow);
+        var result = booking.Confirm(dateTimeProvider.UtcNow);
 
         if (result.IsFailure)
         {
             return result;
         }
 
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }

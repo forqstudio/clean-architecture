@@ -3,15 +3,9 @@ using Quartz;
 
 namespace Bookify.Infrastructure.Outbox;
 
-public class ProcessOutboxMessagesJobSetup : IConfigureOptions<QuartzOptions>
+public class ProcessOutboxMessagesJobSetup(IOptions<OutboxOptions> outboxOptions) : IConfigureOptions<QuartzOptions>
 {
-    private readonly OutboxOptions _outboxOptions;
-
-    public ProcessOutboxMessagesJobSetup(IOptions<OutboxOptions> outboxOptions)
-    {
-        _outboxOptions = outboxOptions.Value;
-    }
-
+    private readonly OutboxOptions outboxOptions = outboxOptions.Value;
     public void Configure(QuartzOptions options)
     {
         const string jobName = nameof(ProcessOutboxMessagesJob);
@@ -22,6 +16,6 @@ public class ProcessOutboxMessagesJobSetup : IConfigureOptions<QuartzOptions>
                 configure
                     .ForJob(jobName)
                     .WithSimpleSchedule(schedule =>
-                        schedule.WithIntervalInSeconds(_outboxOptions.IntervalInSeconds).RepeatForever()));
+                        schedule.WithIntervalInSeconds(outboxOptions.IntervalInSeconds).RepeatForever()));
     }
 }

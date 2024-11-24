@@ -6,27 +6,20 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
-namespace Bookify.Api.Controllers.Bookings
-{
+namespace Bookify.Api.Controllers.Bookings;
+
     [ApiController]
     [Authorize]
     [ApiVersion(ApiVersions.V1)]
     [Route("api/v{version:apiVersion}/bookings")]
-    public class BookingsController : ControllerBase
+    public class BookingsController(ISender sender) : ControllerBase
     {
-        private readonly ISender _sender;
-
-        public BookingsController(ISender sender)
-        {
-            _sender = sender;
-        }
-
         [HttpGet("{id}")]
         public async Task<IActionResult> GetBooking(
             Guid id,
             CancellationToken cancellationToken)
         {
-            var result  = await _sender.Send(new GetBookingQuery(id), cancellationToken);
+            var result = await sender.Send(new GetBookingQuery(id), cancellationToken);
             return result.IsSuccess ? Ok(result.Value) : NotFound();
         }
 
@@ -41,15 +34,13 @@ namespace Bookify.Api.Controllers.Bookings
                 request.StartDate,
                 request.EndDate);
 
-            var result = await _sender.Send(command, cancellationToken);
+            var result = await sender.Send(command, cancellationToken);
 
             if (result.IsFailure)
             {
                 return StatusCode((int)HttpStatusCode.InternalServerError, result.Error);
             }
 
-
             return CreatedAtAction(nameof(GetBooking), new { id = result.Value }, result.Value);
         }
     }
-}

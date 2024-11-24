@@ -4,26 +4,18 @@ using Bookify.Domain.Abstractions;
 using Bookify.Infrastructure.Outbox;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using System.Data;
 
 namespace Bookify.Infrastructure;
 
-public sealed class ApplicationDbContext : DbContext, IUnitOfWork
+public sealed class ApplicationDbContext(
+    DbContextOptions<ApplicationDbContext> options,
+    IDateTimeProvider _dateTimeProvider
+) : DbContext(options), IUnitOfWork
 {
-    private readonly IDateTimeProvider _dateTimeProvider;
-
     private static readonly JsonSerializerSettings JsonSerializerSettings = new()
     {
         TypeNameHandling = TypeNameHandling.All
     };
-
-    public ApplicationDbContext(
-        DbContextOptions options,
-        IDateTimeProvider dateTimeProvider)
-        : base(options)
-    {
-        _dateTimeProvider = dateTimeProvider;
-    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

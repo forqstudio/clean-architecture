@@ -4,28 +4,21 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Bookify.Infrastructure.Authorization;
 
-internal sealed class PermissionAuthorizationHandler : AuthorizationHandler<PermissionRequirement>
+internal sealed class PermissionAuthorizationHandler(IServiceProvider serviceProvider) : AuthorizationHandler<PermissionRequirement>
 {
-    private readonly IServiceProvider _serviceProvider;
-
-    public PermissionAuthorizationHandler(IServiceProvider serviceProvider)
-    {
-        _serviceProvider = serviceProvider;
-    }
-
     protected override async Task HandleRequirementAsync(
-        AuthorizationHandlerContext context, 
+        AuthorizationHandlerContext context,
         PermissionRequirement requirement)
     {
-        if (context.User.Identity is not { IsAuthenticated: true }) 
+        if (context.User.Identity is not { IsAuthenticated: true })
         {
             return;
         }
 
-        var scope = _serviceProvider.CreateScope();
-        
+        var scope = serviceProvider.CreateScope();
+
         var authorizationService = scope.ServiceProvider.GetRequiredService<AuthorizationService>();
-        
+
         var identityId = context.User.GetIdentityId();
 
         HashSet<string> permissions = await authorizationService.GetPermissionsForUserAsync(identityId); // TODO: cache this to imrove performance
