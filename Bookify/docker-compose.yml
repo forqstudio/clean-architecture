@@ -9,6 +9,9 @@ services:
       dockerfile: src/Bookify.Api/Dockerfile
     depends_on:
       - bookify-db
+      - bookify-idp
+      - bookify-seq
+      - bookify-redis
 
   bookify-db:
     image: postgres:latest

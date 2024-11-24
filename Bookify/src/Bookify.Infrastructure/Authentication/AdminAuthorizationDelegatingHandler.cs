@@ -6,14 +6,9 @@ using Microsoft.Extensions.Options;
 
 namespace Bookify.Infrastructure.Authentication;
 
-public sealed class AdminAuthorizationDelegatingHandler : DelegatingHandler
+public sealed class AdminAuthorizationDelegatingHandler(IOptions<KeycloakOptions> keycloakOptions) : DelegatingHandler
 {
-    private readonly KeycloakOptions _keycloakOptions;
-
-    public AdminAuthorizationDelegatingHandler(IOptions<KeycloakOptions> keycloakOptions)
-    {
-        _keycloakOptions = keycloakOptions.Value;
-    }
+    private readonly KeycloakOptions keycloakOptions = keycloakOptions.Value;
 
     protected override async Task<HttpResponseMessage> SendAsync(
         HttpRequestMessage request,
@@ -36,8 +31,8 @@ public sealed class AdminAuthorizationDelegatingHandler : DelegatingHandler
     {
         var authorizationRequestParameters = new KeyValuePair<string, string>[]
         {
-            new("client_id", _keycloakOptions.AdminClientId),
-            new("client_secret", _keycloakOptions.AdminClientSecret),
+            new("client_id", keycloakOptions.AdminClientId),
+            new("client_secret", keycloakOptions.AdminClientSecret),
             new("scope", "openid email"),
             new("grant_type", "client_credentials")
         };
@@ -46,7 +41,7 @@ public sealed class AdminAuthorizationDelegatingHandler : DelegatingHandler
 
         var authorizationRequest = new HttpRequestMessage(
             HttpMethod.Post,
-            new Uri(_keycloakOptions.TokenUrl))
+            new Uri(keycloakOptions.TokenUrl))
         {
             Content = authorizationRequestContent
         };

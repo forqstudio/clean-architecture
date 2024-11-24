@@ -7,20 +7,14 @@ using Dapper;
 
 namespace Bookify.Application.Bookings.GetBooking;
 
-internal sealed class GetBookingQueryHandler : IQueryHandler<GetBookingQuery, BookingResponse>
+internal sealed class GetBookingQueryHandler(
+    ISqlConnectionFactory sqlConnectionFactory,
+    IUserContext userContext
+    ) : IQueryHandler<GetBookingQuery, BookingResponse>
 {
-    private readonly ISqlConnectionFactory _sqlConnectionFactory;
-    private readonly IUserContext _userContext;
-
-    public GetBookingQueryHandler(ISqlConnectionFactory sqlConnectionFactory, IUserContext userContext)
-    {
-        _sqlConnectionFactory = sqlConnectionFactory;
-        _userContext = userContext;
-    }
-
     public async Task<Result<BookingResponse>> Handle(GetBookingQuery request, CancellationToken cancellationToken)
     {
-        using var connection = _sqlConnectionFactory.CreateConnection();
+        using var connection = sqlConnectionFactory.CreateConnection();
 
         const string sql = """
             SELECT
@@ -51,7 +45,7 @@ internal sealed class GetBookingQueryHandler : IQueryHandler<GetBookingQuery, Bo
             });
 
         // TODO: proper resource based authorization using row level security instead of this
-        if(booking is null || booking.UserId != _userContext.UserId)
+        if (booking is null || booking.UserId != userContext.UserId)
         {
             return Result.Failure<BookingResponse>(BookingErrors.NotFound);
         }

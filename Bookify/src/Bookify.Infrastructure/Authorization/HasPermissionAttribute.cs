@@ -2,10 +2,6 @@
 
 namespace Bookify.Infrastructure.Authorization;
 
-public sealed class HasPermissionAttribute :  AuthorizeAttribute
+public sealed class HasPermissionAttribute(string permission) : AuthorizeAttribute(permission)
 {
-    public HasPermissionAttribute(string permission)
-        : base(permission)
-    {   
-    }
 }

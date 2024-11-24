@@ -14,15 +14,8 @@ namespace Bookify.Api.Controllers.Users;
 [ApiVersion(ApiVersions.V1)]
 [ApiVersion(ApiVersions.V2)]
 [Route("api/v{version:apiVersion}/users")]
-public class UsersController : ControllerBase
+public class UsersController(ISender sender) : ControllerBase
 {
-    private readonly ISender _sender;
-
-    public UsersController(ISender sender)
-    {
-        _sender = sender;
-    }
-
     [AllowAnonymous]
     [ApiVersion(ApiVersions.V1)]
     [HttpPost("register")]
@@ -36,7 +29,7 @@ public class UsersController : ControllerBase
             request.LastName,
             request.Password);
 
-        var result = await _sender.Send(command, cancellationToken);
+        var result = await sender.Send(command, cancellationToken);
 
         if (result.IsFailure)
         {
@@ -55,7 +48,7 @@ public class UsersController : ControllerBase
     {
         var command = new LogInUserCommand(request.Email, request.Password);
 
-        var result = await _sender.Send(command, cancellationToken);
+        var result = await sender.Send(command, cancellationToken);
 
         if (result.IsFailure)
         {
@@ -72,7 +65,7 @@ public class UsersController : ControllerBase
     {
         var query = new GetLoggedInUserQuery();
 
-        var result = await _sender.Send(query, cancellationToken);
+        var result = await sender.Send(query, cancellationToken);
 
         return Ok(result.Value);
     }
@@ -84,7 +77,7 @@ public class UsersController : ControllerBase
     {
         var query = new GetLoggedInUserQuery();
 
-        var result = await _sender.Send(query, cancellationToken);
+        var result = await sender.Send(query, cancellationToken);
 
         return Ok(result.Value);
     }

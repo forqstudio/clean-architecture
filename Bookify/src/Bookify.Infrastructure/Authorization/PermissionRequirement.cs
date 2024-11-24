@@ -2,12 +2,7 @@
 
 namespace Bookify.Infrastructure.Authorization;
 
-internal sealed class PermissionRequirement: IAuthorizationRequirement
+internal sealed class PermissionRequirement(string permission) : IAuthorizationRequirement
 {
-    public string Permission { get; }
-
-    public PermissionRequirement(string permission)
-    {
-        Permission = permission;
-    }
+    public string Permission { get; } = permission;
 }
