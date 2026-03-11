@@ -7,6 +7,7 @@ using Bookify.Infrastructure.Authorization;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using DomainPermissions = Bookify.Domain.Users.Permissions;
 
 namespace Bookify.Api.Controllers.Users;
 
@@ -60,7 +61,7 @@ public class UsersController(ISender sender) : ControllerBase
 
     [HttpGet("me")]
     [ApiVersion(ApiVersions.V1)]
-    [HasPermission(Permissions.UsersRead)]
+    [HasPermission(DomainPermissions.UsersRead)]
     public async Task<IActionResult> GetLoggedInUserV1(CancellationToken cancellationToken)
     {
         var query = new GetLoggedInUserQuery();
@@ -72,7 +73,7 @@ public class UsersController(ISender sender) : ControllerBase
 
     [HttpGet("me")]
     [MapToApiVersion(ApiVersions.V2)]
-    [HasPermission(Permissions.UsersRead)]
+    [HasPermission(DomainPermissions.UsersRead)]
     public async Task<IActionResult> GetLoggedInUserV2(CancellationToken cancellationToken)
     {
         var query = new GetLoggedInUserQuery();

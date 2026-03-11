@@ -25,6 +25,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Quartz;
+using StackExchange.Redis;
 using AuthenticationOptions = Bookify.Infrastructure.Authentication.AuthenticationOptions;
 using AuthenticationService = Bookify.Infrastructure.Authentication.AuthenticationService;
 using IAuthenticationService = Bookify.Application.Abstractions.Authentication.IAuthenticationService;
@@ -33,6 +34,13 @@ namespace Bookify.Infrastructure;
 
 public static class DependencyInjection
 {
+    private const string DatabaseConnectionName = "Database";
+    private const string CacheConnectionName = "Cache";
+    private const string AuthenticationSection = "Authentication";
+    private const string KeycloakSection = "Keycloak";
+    private const string KeycloakBaseUrlKey = "KeyCloak:BaseUrl";
+    private const string OutboxSection = "Outbox";
+
     public static IServiceCollection AddInfrastructure(
         this IServiceCollection services,
         IConfiguration configuration)
@@ -53,7 +61,7 @@ public static class DependencyInjection
 
         AddApiVersioning(services);
 
-        // AddBackgroundJobs(services, configuration);
+        AddBackgroundJobs(services, configuration);
 
         return services;
     }
@@ -61,7 +69,7 @@ public static class DependencyInjection
     private static void AddPersistence(IServiceCollection services, IConfiguration configuration)
     {
         var connectionString =
-            configuration.GetConnectionString("Database") ??
+            configuration.GetConnectionString(DatabaseConnectionName) ??
             throw new ArgumentNullException(nameof(configuration));
 
         services.AddDbContext<ApplicationDbContext>(options =>
@@ -74,6 +82,12 @@ public static class DependencyInjection
         services.AddScoped<IApartmentRepository, ApartmentRepository>();
 
         services.AddScoped<IBookingRepository, BookingRepository>();
+
+        services.AddScoped<IPermissionRepository, PermissionRepository>();
+
+        services.AddScoped<IRoleRepository, RoleRepository>();
+
+        services.AddScoped<IUserSettingsRepository, UserSettingsRepository>();
 
         services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<ApplicationDbContext>());
 
@@ -89,11 +103,11 @@ public static class DependencyInjection
             .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer();
 
-        services.Configure<AuthenticationOptions>(configuration.GetSection("Authentication"));
+        services.Configure<AuthenticationOptions>(configuration.GetSection(AuthenticationSection));
 
         services.ConfigureOptions<JwtBearerOptionsSetup>();
 
-        services.Configure<KeycloakOptions>(configuration.GetSection("Keycloak"));
+        services.Configure<KeycloakOptions>(configuration.GetSection(KeycloakSection));
 
         services.AddTransient<AdminAuthorizationDelegatingHandler>();
 
@@ -130,8 +144,11 @@ public static class DependencyInjection
 
     private static void AddCaching(IServiceCollection services, IConfiguration configuration)
     {
-        var connectionString = configuration.GetConnectionString("Cache") ??
+        var connectionString = configuration.GetConnectionString(CacheConnectionName) ??
                                throw new ArgumentNullException(nameof(configuration));
+
+        services.AddSingleton<IConnectionMultiplexer>(_ =>
+            ConnectionMultiplexer.Connect(connectionString));
 
         services.AddStackExchangeRedisCache(options => options.Configuration = connectionString);
 
@@ -141,9 +158,9 @@ public static class DependencyInjection
     private static void AddHealthChecks(IServiceCollection services, IConfiguration configuration)
     {
         services.AddHealthChecks()
-            .AddNpgSql(configuration.GetConnectionString("Database")!)
-            .AddRedis(configuration.GetConnectionString("Cache")!)
-            .AddUrlGroup(new Uri(configuration["KeyCloak:BaseUrl"]!), HttpMethod.Get, "keycloak");
+            .AddNpgSql(configuration.GetConnectionString(DatabaseConnectionName)!)
+            .AddRedis(configuration.GetConnectionString(CacheConnectionName)!)
+            .AddUrlGroup(new Uri(configuration[KeycloakBaseUrlKey]!), HttpMethod.Get, "keycloak");
     }
 
     private static void AddApiVersioning(IServiceCollection services)
@@ -165,7 +182,7 @@ public static class DependencyInjection
 
     private static void AddBackgroundJobs(IServiceCollection services, IConfiguration configuration)
     {
-        services.Configure<OutboxOptions>(configuration.GetSection("Outbox"));
+        services.Configure<OutboxOptions>(configuration.GetSection(OutboxSection));
 
         services.AddQuartz(c => {
             var scheduler = Guid.NewGuid();

@@ -15,7 +15,7 @@ internal sealed class RolePermissionConfiguration : IEntityTypeConfiguration<Rol
         builder.HasData(
             new RolePermission
             (
-                Role.Registered.Id,
+                Role.User.Id,
                 Permission.UsersRead.Id
             ));
     }
