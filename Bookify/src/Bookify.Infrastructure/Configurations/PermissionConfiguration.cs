@@ -12,7 +12,9 @@ namespace Bookify.Infrastructure.Configurations
 
             builder.HasKey(p => p.Id);
 
-            builder.HasData(Permission.UsersRead);
+            builder.HasQueryFilter(p => !p.IsDeleted);
+
+            builder.HasData(Permission.UsersRead, Permission.UsersWrite);
         }
     }
 }

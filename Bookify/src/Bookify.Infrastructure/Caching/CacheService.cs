@@ -1,11 +1,14 @@
 ﻿using Bookify.Application.Abstractions.Caching;
 using Microsoft.Extensions.Caching.Distributed;
+using StackExchange.Redis;
 using System.Buffers;
 using System.Text.Json;
 
 namespace Bookify.Infrastructure.Caching;
 
-internal sealed class CacheService(IDistributedCache cache) : ICacheService
+internal sealed class CacheService(
+    IDistributedCache cache,
+    IConnectionMultiplexer connectionMultiplexer) : ICacheService
 {
     public async Task<T?> GetAsync<T>(string key, CancellationToken cancellationToken = default)
     {
@@ -27,6 +30,19 @@ internal sealed class CacheService(IDistributedCache cache) : ICacheService
 
     public Task RemoveAsync(string key, CancellationToken cancellationToken = default) =>
         cache.RemoveAsync(key, cancellationToken);
+
+    public async Task RemoveManyAsync(IEnumerable<string> keys, CancellationToken cancellationToken = default)
+    {
+        var redisKeys = keys.Select(k => new RedisKey(k)).ToArray();
+
+        if (redisKeys.Length == 0)
+        {
+            return;
+        }
+
+        var database = connectionMultiplexer.GetDatabase();
+        await database.KeyDeleteAsync(redisKeys);
+    }
 
     private static T Deserialize<T>(byte[] bytes)
     {

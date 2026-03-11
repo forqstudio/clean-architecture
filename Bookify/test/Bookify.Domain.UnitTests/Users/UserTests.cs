@@ -38,6 +38,6 @@ public class UserTests : BaseTest
         var user = User.Create(UserData.FirstName, UserData.LastName, UserData.Email);
 
         // Assert
-        user.Roles.Should().Contain(Role.Registered);
+        user.Roles.Should().Contain(Role.User);
     }
 }

@@ -21,7 +21,7 @@ internal sealed class PermissionAuthorizationHandler(IServiceProvider servicePro
 
         var identityId = context.User.GetIdentityId();
 
-        HashSet<string> permissions = await authorizationService.GetPermissionsForUserAsync(identityId); // TODO: cache this to imrove performance
+        HashSet<string> permissions = await authorizationService.GetPermissionsForUserAsync(identityId);
 
         if (permissions.Contains(requirement.Permission))
         {

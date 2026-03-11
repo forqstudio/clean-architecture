@@ -10,7 +10,7 @@ internal sealed class AuthorizationService(
 {
     public async Task<UserRolesResponse> GetRolesForUserAsync(string identityId)
     {
-        var cacheKey = $"auth:roles-{identityId}";
+        var cacheKey = CacheKeys.AuthRoles(identityId);
         var cachedRoles = await cacheService.GetAsync<UserRolesResponse>(cacheKey);
 
         if (cachedRoles is not null)
@@ -34,7 +34,7 @@ internal sealed class AuthorizationService(
 
     public async Task<HashSet<string>> GetPermissionsForUserAsync(string identityId)
     {
-        var cacheKey = $"auth:permissions-{identityId}";
+        var cacheKey = CacheKeys.AuthPermissions(identityId);
         var cachedPermissions = await cacheService.GetAsync<HashSet<string>>(cacheKey);
 
         if (cachedPermissions is not null)

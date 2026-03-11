@@ -5,6 +5,13 @@ namespace Bookify.Api.Middleware;
 
 public class ExceptionHandlingMiddleware(RequestDelegate next, ILogger<ExceptionHandlingMiddleware> logger)
 {
+    private const string ValidationFailureType = "ValidationFailure";
+    private const string ValidationErrorTitle = "Validation error";
+    private const string ValidationErrorDetail = "One or more validation errors has occurred";
+    private const string ServerErrorType = "ServerError";
+    private const string ServerErrorTitle = "Server error";
+    private const string ServerErrorDetail = "An unexpected error has occurred";
+
     public async Task InvokeAsync(HttpContext context)
     {
         try
@@ -42,15 +49,15 @@ public class ExceptionHandlingMiddleware(RequestDelegate next, ILogger<Exception
         {
             ValidationException validationException => new ExceptionDetails(
                 StatusCodes.Status400BadRequest,
-                "ValidationFailure",
-                "Validation error",
-                "One or more validation errors has occurred",
+                ValidationFailureType,
+                ValidationErrorTitle,
+                ValidationErrorDetail,
                 validationException.Errors),
             _ => new ExceptionDetails(
                 StatusCodes.Status500InternalServerError,
-                "ServerError",
-                "Server error",
-                "An unexpected error has occurred",
+                ServerErrorType,
+                ServerErrorTitle,
+                ServerErrorDetail,
                 null)
         };
     }

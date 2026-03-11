@@ -13,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Net.Http.Json;
 using Testcontainers.Keycloak;
 using Testcontainers.PostgreSql;
+using StackExchange.Redis;
 using Testcontainers.Redis;
 
 namespace Bookify.Api.FunctionalTests.Infrastructure;
@@ -55,6 +56,10 @@ public class FunctionalTestWebAppFactory : WebApplicationFactory<Program>, IAsyn
 
             services.Configure<RedisCacheOptions>(redisCacheOptions =>
                 redisCacheOptions.Configuration = _redisContainer.GetConnectionString());
+
+            services.RemoveAll(typeof(IConnectionMultiplexer));
+            services.AddSingleton<IConnectionMultiplexer>(_ =>
+                ConnectionMultiplexer.Connect(_redisContainer.GetConnectionString()));
 
             var keycloakAddress = _keycloakContainer.GetBaseAddress();
 

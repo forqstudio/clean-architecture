@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Testcontainers.Keycloak;
 using Testcontainers.PostgreSql;
+using StackExchange.Redis;
 using Testcontainers.Redis;
 
 namespace Bookify.Application.IntegrationTests.Infrastructure;
@@ -53,6 +54,10 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
 
             services.Configure<RedisCacheOptions>(redisCacheOptions =>
                 redisCacheOptions.Configuration = _redisContainer.GetConnectionString());
+
+            services.RemoveAll(typeof(IConnectionMultiplexer));
+            services.AddSingleton<IConnectionMultiplexer>(_ =>
+                ConnectionMultiplexer.Connect(_redisContainer.GetConnectionString()));
 
             var keycloakAddress = _keycloakContainer.GetBaseAddress();
 
