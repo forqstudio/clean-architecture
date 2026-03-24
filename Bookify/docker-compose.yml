@@ -43,7 +43,7 @@ services:
       - KEYCLOAK_ADMIN_PASSWORD=admin
     volumes:
       - keycloak_data:/opt/keycloak/data
-      #- ./.files/bookify-realm-export.json:/opt/keycloak/data/import/realm.json
+      - ./.files/bookify-realm-export.json:/opt/keycloak/data/import/realm.json
     ports:
       - 8082:8080
 
