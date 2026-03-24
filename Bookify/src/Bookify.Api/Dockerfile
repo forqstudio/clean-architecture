@@ -9,10 +9,10 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["src/Bookify.Api/Bookify.Api.csproj", "src/Bookify.Api/"]
-RUN dotnet restore "./src/Bookify.Api/Bookify.Api.csproj"
+COPY ["Bookify.Api/Bookify.Api.csproj", "Bookify.Api/"]
+RUN dotnet restore "./Bookify.Api/Bookify.Api.csproj"
 COPY . .
-WORKDIR "/src/src/Bookify.Api"
+WORKDIR "/src/Bookify.Api"
 RUN dotnet build "./Bookify.Api.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
