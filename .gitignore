@@ -484,3 +484,5 @@ $RECYCLE.BIN/
 *.swp
 
 .containers/*
+# Claude Code local settings
+.claude/settings.local.json
