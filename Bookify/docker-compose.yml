@@ -1,27 +1,27 @@
 version: '3.4'
 
 services:
-  bookify.api:
-    image: ${DOCKER_REGISTRY-}bookifyapi
-    container_name: Bookify.Api
+  forqstudio.api:
+    image: ${DOCKER_REGISTRY-}forqstudioapi
+    container_name: ForqStudio.Api
     build:
       context: ./src
-      dockerfile: Bookify.Api/Dockerfile
+      dockerfile: ForqStudio.Api/Dockerfile
     depends_on:
-      bookify-db:
+      forqstudio-db:
         condition: service_healthy
-      bookify-idp:
+      forqstudio-idp:
         condition: service_started
-      bookify-seq:
+      forqstudio-seq:
         condition: service_started
-      bookify-redis:
+      forqstudio-redis:
         condition: service_started
 
-  bookify-db:
+  forqstudio-db:
     image: postgres:latest
-    container_name: Bookify.Db
+    container_name: ForqStudio.Db
     environment:
-      - POSTGRES_DB=bookify
+      - POSTGRES_DB=forqstudio
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     volumes:
@@ -29,27 +29,27 @@ services:
     ports:
       - 5432:5432
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d bookify"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d forqstudio"]
       interval: 5s
       timeout: 5s
       retries: 5
 
-  bookify-idp:
+  forqstudio-idp:
     image: quay.io/keycloak/keycloak:latest
-    container_name: Bookify.Identity
+    container_name: ForqStudio.Identity
     command: start-dev --import-realm
     environment:
       - KEYCLOAK_ADMIN=admin
       - KEYCLOAK_ADMIN_PASSWORD=admin
     volumes:
       - keycloak_data:/opt/keycloak/data
-      - ./.files/bookify-realm-export.json:/opt/keycloak/data/import/realm.json
+      - ./.files/forqstudio-realm-export.json:/opt/keycloak/data/import/realm.json
     ports:
       - 8082:8080
 
-  bookify-seq:
+  forqstudio-seq:
     image: datalust/seq:latest
-    container_name: Bookify.Seq
+    container_name: ForqStudio.Seq
     environment:
       - ACCEPT_EULA=Y
       - SEQ_FIRSTRUN_NOAUTHENTICATION=true
@@ -57,9 +57,9 @@ services:
       - 5341:5341
       - 8083:80
   
-  bookify-redis:
+  forqstudio-redis:
     image: redis:latest
-    container_name: Bookify.Redis
+    container_name: ForqStudio.Redis
     restart: always
     ports:
       - '6379:6379'

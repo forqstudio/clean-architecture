@@ -2,7 +2,7 @@
 
 ## Overview
 
-Bookify implements a **permission-based authorization system** integrated with **Keycloak** as the identity provider. The architecture follows clean architecture principles, separating authentication concerns from authorization logic.
+ForqStudio implements a **permission-based authorization system** integrated with **Keycloak** as the identity provider. The architecture follows clean architecture principles, separating authentication concerns from authorization logic.
 
 This system supports:
 - **JWT-based authentication** via Keycloak
@@ -33,13 +33,13 @@ This system supports:
 
 ### Identity Provider
 
-Bookify uses **Keycloak** as the external identity provider for user authentication.
+ForqStudio uses **Keycloak** as the external identity provider for user authentication.
 
 ### User Registration
 
 The `AuthenticationService` handles user registration by creating users in Keycloak with password credentials.
 
-**Location**: `src/Bookify.Infrastructure/Authentication/AuthenticationService.cs`
+**Location**: `src/ForqStudio.Infrastructure/Authentication/AuthenticationService.cs`
 
 ```csharp
 public interface IAuthenticationService
@@ -57,7 +57,7 @@ public interface IAuthenticationService
 
 The `JwtService` obtains JWT access tokens from Keycloak using the OAuth2 password grant flow.
 
-**Location**: `src/Bookify.Infrastructure/Authentication/JwtService.cs`
+**Location**: `src/ForqStudio.Infrastructure/Authentication/JwtService.cs`
 
 ```csharp
 public interface IJwtService
@@ -81,7 +81,7 @@ public interface IJwtService
 
 The `UserContext` provides access to the current authenticated user's information from the HTTP context.
 
-**Location**: `src/Bookify.Infrastructure/Authentication/UserContext.cs`
+**Location**: `src/ForqStudio.Infrastructure/Authentication/UserContext.cs`
 
 ```csharp
 public interface IUserContext
@@ -114,7 +114,7 @@ public static string GetIdentityId(this ClaimsPrincipal? principal)
 
 The `AdminAuthorizationDelegatingHandler` handles administrative operations that require client credentials flow to obtain admin tokens from Keycloak.
 
-**Location**: `src/Bookify.Infrastructure/Authentication/AdminAuthorizationDelegatingHandler.cs`
+**Location**: `src/ForqStudio.Infrastructure/Authentication/AdminAuthorizationDelegatingHandler.cs`
 
 ```csharp
 public sealed class AdminAuthorizationDelegatingHandler : DelegatingHandler
@@ -154,7 +154,7 @@ public sealed class AdminAuthorizationDelegatingHandler : DelegatingHandler
 
 ### Permission-Based Authorization
 
-Bookify implements a **custom permission-based authorization system** that dynamically checks user permissions against required permissions.
+ForqStudio implements a **custom permission-based authorization system** that dynamically checks user permissions against required permissions.
 
 ### Authorization Components
 
@@ -162,7 +162,7 @@ Bookify implements a **custom permission-based authorization system** that dynam
 
 A custom attribute used to secure API endpoints by requiring specific permissions.
 
-**Location**: `src/Bookify.Infrastructure/Authorization/HasPermissionAttribute.cs`
+**Location**: `src/ForqStudio.Infrastructure/Authorization/HasPermissionAttribute.cs`
 
 ```csharp
 public sealed class HasPermissionAttribute(string permission) : AuthorizeAttribute(permission)
@@ -183,7 +183,7 @@ public async Task<IActionResult> CreateUser([FromBody] CreateUserRequest request
 
 Represents a single permission requirement for authorization.
 
-**Location**: `src/Bookify.Infrastructure/Authorization/PermissionRequirement.cs`
+**Location**: `src/ForqStudio.Infrastructure/Authorization/PermissionRequirement.cs`
 
 ```csharp
 internal sealed class PermissionRequirement(string permission) : IAuthorizationRequirement
@@ -196,7 +196,7 @@ internal sealed class PermissionRequirement(string permission) : IAuthorizationR
 
 Handles the authorization check for permission requirements.
 
-**Location**: `src/Bookify.Infrastructure/Authorization/PermissionAuthorizationHandler.cs`
+**Location**: `src/ForqStudio.Infrastructure/Authorization/PermissionAuthorizationHandler.cs`
 
 ```csharp
 internal sealed class PermissionAuthorizationHandler(IServiceProvider serviceProvider) 
@@ -229,7 +229,7 @@ internal sealed class PermissionAuthorizationHandler(IServiceProvider servicePro
 
 Dynamically creates authorization policies for permission requirements.
 
-**Location**: `src/Bookify.Infrastructure/Authorization/PermissionAuthorizationPolicyProvider.cs`
+**Location**: `src/ForqStudio.Infrastructure/Authorization/PermissionAuthorizationPolicyProvider.cs`
 
 ```csharp
 internal sealed class PermissionAuthorizationPolicyProvider 
@@ -259,7 +259,7 @@ internal sealed class PermissionAuthorizationPolicyProvider
 
 Enriches user claims with roles from the database on authentication. This transforms the claims principal after successful authentication to include database-specific role information.
 
-**Location**: `src/Bookify.Infrastructure/Authorization/CustomClaimsTransformation.cs`
+**Location**: `src/ForqStudio.Infrastructure/Authorization/CustomClaimsTransformation.cs`
 
 ```csharp
 public sealed class CustomClaimsTransformation : IClaimsTransformation
@@ -303,7 +303,7 @@ public sealed class CustomClaimsTransformation : IClaimsTransformation
 
 Provides methods to retrieve user roles and permissions, with caching support.
 
-**Location**: `src/Bookify.Infrastructure/Authorization/AuthorizationService.cs`
+**Location**: `src/ForqStudio.Infrastructure/Authorization/AuthorizationService.cs`
 
 ```csharp
 internal sealed class AuthorizationService(ApplicationDbContext dbContext, ICacheService cacheService)
@@ -361,7 +361,7 @@ internal sealed class AuthorizationService(ApplicationDbContext dbContext, ICach
 
 Represents an application user, linked to Keycloak via `IdentityId`.
 
-**Location**: `src/Bookify.Domain/Users/User.cs`
+**Location**: `src/ForqStudio.Domain/Users/User.cs`
 
 ```csharp
 public sealed class User : Entity
@@ -391,7 +391,7 @@ public sealed class User : Entity
 
 Represents a role that can be assigned to users and contains permissions.
 
-**Location**: `src/Bookify.Domain/Users/Role.cs`
+**Location**: `src/ForqStudio.Domain/Users/Role.cs`
 
 ```csharp
 public sealed class Role
@@ -413,13 +413,13 @@ public sealed class Role
 
 Represents a granular permission that can be assigned to roles.
 
-**Location**: `src/Bookify.Domain/Users/Permission.cs`
+**Location**: `src/ForqStudio.Domain/Users/Permission.cs`
 
 ### Permissions Static Class
 
 Defines all available permission constants.
 
-**Location**: `src/Bookify.Domain/Users/Permissions.cs`
+**Location**: `src/ForqStudio.Domain/Users/Permissions.cs`
 
 ```csharp
 public static class Permissions
@@ -437,7 +437,7 @@ public static class Permissions
 
 Defines all available role constants.
 
-**Location**: `src/Bookify.Domain/Users/Roles.cs`
+**Location**: `src/ForqStudio.Domain/Users/Roles.cs`
 
 ```csharp
 public static class Roles
@@ -535,7 +535,7 @@ The application layer contains MediatR handlers for managing users, roles, and p
 
 ### Users
 
-**Location**: `src/Bookify.Application/Users/`
+**Location**: `src/ForqStudio.Application/Users/`
 
 - `RegisterUserCommandHandler`: Handles user registration
 - `LoginUserCommandHandler`: Handles user login
@@ -543,7 +543,7 @@ The application layer contains MediatR handlers for managing users, roles, and p
 
 ### Roles Management
 
-**Location**: `src/Bookify.Application/Roles/`
+**Location**: `src/ForqStudio.Application/Roles/`
 
 - `CreateRoleCommandHandler`: Creates new roles with optional permissions
 - `UpdateRoleCommandHandler`: Updates role details and permissions
@@ -555,7 +555,7 @@ The application layer contains MediatR handlers for managing users, roles, and p
 
 ### Permissions Management
 
-**Location**: `src/Bookify.Application/Permissions/`
+**Location**: `src/ForqStudio.Application/Permissions/`
 
 - `CreatePermissionCommandHandler`: Creates new permissions
 - `UpdatePermissionCommandHandler`: Updates permission details
@@ -665,10 +665,10 @@ Keycloak settings are configured in `appsettings.json`:
 {
   "Keycloak": {
     "Url": "https://keycloak.example.com",
-    "Realm": "bookify",
-    "AuthClientId": "bookify-auth",
+    "Realm": "forqstudio",
+    "AuthClientId": "forqstudio-auth",
     "AuthClientSecret": "your-client-secret",
-    "AdminClientId": "bookify-admin",
+    "AdminClientId": "forqstudio-admin",
     "AdminClientSecret": "your-admin-secret"
   }
 }
